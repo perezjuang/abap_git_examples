@@ -12,6 +12,11 @@ public section.
   data GS_KEY type CHAR100 read-only .
   data GS_LPOR type SIBFLPOR .
 
+  events RUN_WORKFLOW
+    exporting
+      value(I_P1) type INT4 optional
+      value(I_P2) type INT4 optional .
+
   methods GET_RESULT
     importing
       value(IS_P1) type I optional
