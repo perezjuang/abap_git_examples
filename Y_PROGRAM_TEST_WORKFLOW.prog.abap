@@ -1,129 +1,129 @@
-REPORT Y_PROGRAM_TEST.
+report Y_PROGRAM_TEST.
 
 
-CLASS lcl_data DEFINITION.
-  PUBLIC SECTION.
-    METHODS: constructor.
-ENDCLASS.                    "lcl_Data DEFINITION
+class lcl_data definition.
+  public section.
+  methods: constructor.
+endclass.                    "lcl_Data DEFINITION
 *
-INTERFACE lif_write.
-  METHODS: write_data.
-ENDINTERFACE.                    "lif_write DEFINITION
+interface lif_write.
+  methods: write_data.
+endinterface.                    "lif_write DEFINITION
 *
-CLASS lcl_open_workflow DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES: lif_write.
-ENDCLASS.                    "lcl_open_workflow DEFINITION
+class lcl_open_workflow definition.
+  public section.
+  interfaces: lif_write.
+endclass.                    "lcl_open_workflow DEFINITION
 *
-CLASS lcl_write_log DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES: lif_write.
-ENDCLASS.                    "lcl_write_log DEFINITION
+class lcl_write_log definition.
+  public section.
+  interfaces: lif_write.
+endclass.                    "lcl_write_log DEFINITION
 *
-CLASS lcl_facade DEFINITION.
-  PUBLIC SECTION.
-    METHODS: process_report IMPORTING iv_write_type TYPE char1.
-ENDCLASS.                    "lcl_facade DEFINITION
+class lcl_facade definition.
+  public section.
+  methods: process_report importing iv_write_type type char1.
+endclass.                    "lcl_facade DEFINITION
 *
-CLASS lcl_data IMPLEMENTATION.
-  METHOD constructor.
-    WRITE: / 'Getting Data'.
-  ENDMETHOD.                    "constructor
-ENDCLASS.                    "lcl_Data IMPLEMENTATION
+class lcl_data implementation.
+  method constructor.
+    write: / 'Getting Data'.
+  endmethod.                    "constructor
+endclass.                    "lcl_Data IMPLEMENTATION
 *
-CLASS lcl_open_workflow IMPLEMENTATION.
-  METHOD lif_write~write_data.
+class lcl_open_workflow implementation.
+  method lif_write~write_data.
 
 * Data Declarations
-  DATA: lv_class            TYPE sibftypeid,
-        lv_event             TYPE sibfevent,
-         lv_objkey           TYPE sibfinstid,
-  lr_event_parameters TYPE REF TO if_swf_ifs_parameter_container,
-  lv_param_name       TYPE swfdname,
-  lv_id               TYPE char10.
+    data: lv_class            type sibftypeid,
+          lv_event             type sibfevent,
+          lv_objkey           type sibfinstid,
+          lr_event_parameters type ref to if_swf_ifs_parameter_container,
+          lv_param_name       type swfdname,
+          lv_id               type char10.
 
 
-  lv_class = 'ZCL_TEST_WORKFLOW'.
-  lv_event   = 'TRIGGER_RUN_WORKFLOW'.
+    lv_class = 'YCL_TEST_WORKFLOW_JUGPEREZ'.
+    lv_event   = 'RUN_WORKFLOW'.
 
 * Instantiate an empty event container
-  CALL METHOD cl_swf_evt_event=>get_event_container
-    EXPORTING
+    call method cl_swf_evt_event=>get_event_container
+    exporting
       im_objcateg  = cl_swf_evt_event=>mc_objcateg_cl
       im_objtype   = lv_class
       im_event     = lv_event
-    RECEIVING
+      RECEIVING
       re_reference = lr_event_parameters.
 
 * Set up the name/value pair to be added to the container
-  lv_param_name  = 'I_ID'.  " parameter name of the event
-  lv_id          = '1111111111'.
+    lv_param_name  = 'I_P1'.  " parameter name of the event
+    lv_id          = '10'.
 
-  TRY.
-      CALL METHOD lr_event_parameters->set
-        EXPORTING
-          name  = lv_param_name
-          value = lv_id.
+    try.
+      call method lr_event_parameters->set
+      exporting
+        name  = lv_param_name
+        value = lv_id.
 
-    CATCH cx_swf_cnt_cont_access_denied .
-    CATCH cx_swf_cnt_elem_access_denied .
-    CATCH cx_swf_cnt_elem_not_found .
-    CATCH cx_swf_cnt_elem_type_conflict .
-    CATCH cx_swf_cnt_unit_type_conflict .
-    CATCH cx_swf_cnt_elem_def_invalid .
-    CATCH cx_swf_cnt_container .
-  ENDTRY.
+    catch cx_swf_cnt_cont_access_denied .
+    catch cx_swf_cnt_elem_access_denied .
+    catch cx_swf_cnt_elem_not_found .
+    catch cx_swf_cnt_elem_type_conflict .
+    catch cx_swf_cnt_unit_type_conflict .
+    catch cx_swf_cnt_elem_def_invalid .
+    catch cx_swf_cnt_container .
+    endtry.
 
 * Raise the event passing the event container
-  TRY.
-      CALL METHOD cl_swf_evt_event=>raise
-        EXPORTING
-          im_objcateg        = cl_swf_evt_event=>mc_objcateg_cl
-          im_objtype         = lv_class
-          im_event           = lv_event
-          im_objkey          = lv_objkey
-          im_event_container = lr_event_parameters.
-    CATCH cx_swf_evt_invalid_objtype .
-    CATCH cx_swf_evt_invalid_event .
-  ENDTRY.
+    try.
+      call method cl_swf_evt_event=>raise
+      exporting
+        im_objcateg        = cl_swf_evt_event=>mc_objcateg_cl
+        im_objtype         = lv_class
+        im_event           = lv_event
+        im_objkey          = lv_objkey
+        im_event_container = lr_event_parameters.
+    catch cx_swf_evt_invalid_objtype .
+    catch cx_swf_evt_invalid_event .
+    endtry.
 
-  COMMIT WORK.
+    commit work.
 
 
 
-    WRITE: / 'Workflow Lanzado'.
-  ENDMETHOD.                    "lif_write~write_Data
-ENDCLASS.                    "lcl_open_workflow IMPLEMENTATION
+    write: / 'Workflow Lanzado'.
+  endmethod.                    "lif_write~write_Data
+endclass.                    "lcl_open_workflow IMPLEMENTATION
 *
-CLASS lcl_write_log IMPLEMENTATION.
-  METHOD lif_write~write_data.
+class lcl_write_log implementation.
+  method lif_write~write_data.
 
 
 
 
-    WRITE: / 'Escribiendo algo sin lanzar workflow'.
-  ENDMETHOD.                    "lif_write~write_Data
-ENDCLASS.                    "lcl_write_log IMPLEMENTATION
+    write: / 'Escribiendo algo sin lanzar workflow'.
+  endmethod.                    "lif_write~write_Data
+endclass.                    "lcl_write_log IMPLEMENTATION
 *
-CLASS lcl_facade IMPLEMENTATION.
-  METHOD process_report.
-    DATA: lo_data TYPE REF TO lcl_data.
-    CREATE OBJECT lo_data.
+class lcl_facade implementation.
+  method process_report.
+    data: lo_data type ref to lcl_data.
+    create OBJECT lo_data.
 
-    DATA: lo_write TYPE REF TO lif_write.
-    IF iv_write_type = abap_true.
-      CREATE OBJECT lo_write TYPE lcl_open_workflow.
-    ELSE.
-      CREATE OBJECT lo_write TYPE lcl_write_log.
-    ENDIF.
+    data: lo_write type ref to lif_write.
+    if iv_write_type = abap_true.
+      create OBJECT lo_write type lcl_open_workflow.
+    else.
+      create OBJECT lo_write type lcl_write_log.
+    endif.
     lo_write->write_data( ).
-  ENDMETHOD.                    "process_report
-ENDCLASS.                    "lcl_facade IMPLEMENTATION
+  endmethod.                    "process_report
+endclass.                    "lcl_facade IMPLEMENTATION
 
 
-PARAMETERS : P_CHK AS CHECKBOX .
+parameters : P_CHK as checkbox .
 
-START-OF-SELECTION.
-  DATA: lo_facade TYPE REF TO lcl_facade.
-  CREATE OBJECT lo_facade.
-  lo_facade->process_report( iv_write_type = P_CHK ).
+START-of-SELECTION.
+data: lo_facade type ref to lcl_facade.
+create OBJECT lo_facade.
+lo_facade->process_report( iv_write_type = P_CHK ).
